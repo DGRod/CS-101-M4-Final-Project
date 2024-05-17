@@ -105,6 +105,7 @@ class CU:
         address = int(operands[1].strip("R$"))
 
         self.register.data_registers[rt] = self.memory_bus.memory[address]
+        print(self.register.data_registers[rt])
 
     # Store Word
     def sw(self, operands):
@@ -130,14 +131,10 @@ class CPU:
 
 
 
-# ////////// Input Processor //////////
 
 
 
-
-
-
-
+# ////////// Setup //////////
 
 datafile = "C:/Users/DGRod/OneDrive/Desktop/Python Code/CS 101 M4 Project/Input Data/Codecademy-Computer-Architecture-Portfolio-Project-Files/data_input.txt"
 
@@ -156,3 +153,20 @@ cpu = CPU(cu, alu, register, None, memory_bus)
 
 cu.run("ADDI R3,R6,R4")
 cu.run("SW R1,00000111")
+
+
+
+
+# ////////// Input Processor //////////
+
+print('Welcome to CPU Simulator!')
+print("Please enter commands using MIPS Assembly Language\n")
+print("/// OBJECTIVE: ")
+
+
+while True:
+    line = input("")
+    if line == "HALT ;":
+        print("Execution Terminated")
+        break
+    cu.run(line)
