@@ -55,6 +55,22 @@ class ALU:
         print("Register #"+ str(rd), register[rd])
         return register[rd]
     
+    # // Comparison Operations //
+    # Set On Less Than
+    def slt(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+        rt = register_index(operands[2])
+
+        if register[rs] < register[rt]:
+            register[rd] = 1
+        else:
+            register[rd] = 0
+        print("Register #" + str(rd), register[rd])
+        return register[rd]
+        
+    
     # // Logical Operations //
 
     # // Conditional Operations //
@@ -110,6 +126,9 @@ class CU:
 
         elif opcode == "ADDI":
             self.alu.addi(operands)
+        
+        elif opcode == "SLT":
+            self.alu.slt(operands)
 
         elif opcode == "BEQ":
             self.alu.beq(operands, self.parent)
