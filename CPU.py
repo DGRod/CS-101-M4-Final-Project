@@ -185,7 +185,7 @@ class CU:
     
     # // Cache Operations //
     def cache_op(self, operands):
-        return self.cache.status(operands)
+        return self.cache.status(operands[0])
 
 
 class CPU:
@@ -228,12 +228,14 @@ datafile = "C:/Users/DGRod/OneDrive/Desktop/Python Code/CS 101 M4 Project/Input 
 memory_bus = MainMemoryBus()
 memory_bus.download(datafile)
 
+cache = Cache(memory_bus, 64)
+
 register = Register(32, 10)
 register.data_registers[6] = 4
 register.data_registers[4] = 5
 
 
-cpu = CPU(32, None, memory_bus)
+cpu = CPU(32, cache, memory_bus)
 
 # cpu.execute("ADDI R3,R6,R4")
 # cpu.execute("SW R1,00000111")

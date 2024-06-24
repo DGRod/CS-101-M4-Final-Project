@@ -13,20 +13,22 @@ class Cache:
 
     def status(self, code):
         # Set Cache status to OFF
-        if code == 0:
+        if code == '0':
             self.cache_active = False
         # Set Cache status to ON
-        elif code == 1:
+        elif code == '1':
             self.cache_active = True
         # Flush Cache
-        elif code == 2:
+        elif code == '2':
             self.flush()
+        print("Cache Active: " + str(self.cache_active))
 
     def flush(self):
         for block in self.cache:
             block["address"] = None
             block["data"] = None
         print("Cache Flushed")
+        print(self.cache)
 
     def replace(self, address, replacement_policy=None):
 
