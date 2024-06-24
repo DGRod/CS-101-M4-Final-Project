@@ -106,12 +106,22 @@ class ALU:
 # ---- Control Unit ----
 class CU:
 
-    def __init__(self, parent, register, alu, memory_bus):
+    def __init__(self, parent, register, alu, cache, memory_bus):
         self.parent = parent
         self.register = register
         self.alu = alu
+        self.cache = cache
         self.memory_bus = memory_bus
-    
+
+    def request(self, target_address):
+        # If Cache is ON, access Cache
+        if self.cache.cache_active == True:
+            return self.cache.search(target_address)
+        # If Cache is OFF, access MainMemoryBus
+        elif self.cache.cahe_active == False:
+            return self.memory_bus.memory[target_address]
+
+
     def run(self, input):
         split_input = input.split(" ")
         opcode = split_input[0]
@@ -144,6 +154,9 @@ class CU:
         
         elif opcode == "J":
             self.jump(operands, self.parent)
+        
+        elif opcode == "CACHE":
+            self.cache_op(operands)
 
     # // Data Transfer Operations //
     # Load Word
@@ -151,7 +164,7 @@ class CU:
         rt = register_index(operands[0])
         address = register_index(operands[1])
 
-        self.register.data_registers[rt] = self.memory_bus.memory[address]
+        self.register.data_registers[rt] = self.request(address)
         print(self.register.data_registers[rt])
 
     # Store Word
@@ -169,6 +182,10 @@ class CU:
         target = register_index(operands[0]) - 1
         self.parent.counter = int(target)
         print("Jumped to Instruction #" + str(target + 1))
+    
+    # // Cache Operations //
+    def cache_op(self, operands):
+        return self.cache.status(operands)
 
 
 class CPU:
@@ -182,7 +199,7 @@ class CPU:
         self.counter = 0
         self.register = Register(register_size)
         self.alu = ALU(self.register)
-        self.cu = CU(self, self.register, self.alu, self.memory_bus)
+        self.cu = CU(self, self.register, self.alu, self.cache, self.memory_bus)
     
     def execute(self, instructions):
         instructions = instructions.split("\n")

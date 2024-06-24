@@ -5,20 +5,39 @@ from random import randint
 class Cache:
     def __init__(self, main_memory, num_of_registers, number_of_sets=0):
         self.main_memory = main_memory
+
+        self.cache_active = False
         
         self.cache = [{"set":None, "address":None, "data":None} for x in range(0,num_of_registers)]
-
         print(self.cache)
-    
+
+    def status(self, code):
+        # Set Cache status to OFF
+        if code == 0:
+            self.cache_active = False
+        # Set Cache status to ON
+        elif code == 1:
+            self.cache_active = True
+        # Flush Cache
+        elif code == 2:
+            self.flush()
+
+    def flush(self):
+        for block in self.cache:
+            block["address"] = None
+            block["data"] = None
+        print("Cache Flushed")
+
     def replace(self, address, replacement_policy=None):
 
         # Check if Cache is full
         for block in self.cache:
             if block["address"] == None:
+                # Empty block detected, fill with data from MainMemoryBus
                 block["address"] = address
                 block["data"] = self.main_memory.memory[address]
                 return block
-        # If Cache is full, choose which block to replace       
+        # Cache full, choose which block to replace       
         if replacement_policy == "FIFO":
             pass
         # If no Replacement Policy is selected, replace a random block
@@ -32,12 +51,12 @@ class Cache:
     def search(self, target):
         for block in self.cache:
             if block["address"] == target:
-                # Return data stored in Cache
+                # Cache Hit -- Return data stored in Cache
                 print("Cache Hit")
                 return block["data"]
             else:
+                # Cache Miss -- Access MainMemoryBus
                 print("Cache Miss")
-                # Access MainMemoryBus
                 block = self.replace(target)
                 return block["data"]
 
