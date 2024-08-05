@@ -13,6 +13,8 @@ class Register:
         # Define separate registers for data and execution history
         self.data_registers = [0 for x in range(0, num_of_registers)]
         self.history_registers = [0 for x in range(0, num_of_history_registers)]
+        self.hi = 0
+        self.lo = 0
 
 
 # ---- Arithmetic Logic Unit ----
@@ -54,6 +56,29 @@ class ALU:
         register[rd] = register[rs] - register[rt]
         print("Register #"+ str(rd), register[rd])
         return register[rd]
+    
+    # Multiply Registers
+    def mult(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+
+        hi = register[rd] * register[rs]
+        print(hi)
+        self.register.hi = hi
+        
+    
+    # Multiply Registers
+    def div(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+
+        hi = register[rd] // register[rs]
+        lo = register[rd] % register[rs]
+        print(hi, lo)
+        self.register.hi = hi
+        self.register.lo = lo
     
     # // Comparison Operations //
     # Set On Less Than
@@ -118,7 +143,7 @@ class CU:
         if self.cache.cache_active == True:
             return self.cache.search(target_address)
         # If Cache is OFF, access MainMemoryBus
-        elif self.cache.cahe_active == False:
+        elif self.cache.cache_active == False:
             return self.memory_bus.memory[target_address]
 
 
@@ -130,12 +155,18 @@ class CU:
 
         if opcode == "ADD":
             self.alu.add(operands)
+
+        elif opcode == "ADDI":
+            self.alu.addi(operands)
         
         elif opcode == "SUB":
             self.alu.sub(operands)
 
-        elif opcode == "ADDI":
-            self.alu.addi(operands)
+        elif opcode == "MULT":
+            self.alu.mult(operands)
+
+        elif opcode == "DIV":
+            self.alu.div(operands)
         
         elif opcode == "SLT":
             self.alu.slt(operands)
@@ -151,6 +182,12 @@ class CU:
 
         elif opcode == "SW":
             self.sw(operands)
+
+        elif opcode == "MFHI":
+            self.mfhi(operands)
+        
+        elif opcode == "MFLO":
+            self.mflo(operands)
         
         elif opcode == "J":
             self.jump(operands, self.parent)
@@ -174,6 +211,16 @@ class CU:
 
         self.memory_bus.memory[address] = self.register.data_registers[rt]
         print(self.memory_bus.memory[address])
+
+    # Move from Hi
+    def mfhi(self, operands):
+        self.register.data_registers[register_index(operands[0])] = self.register.hi
+        print("Loading " + str(self.register.hi) + " from $hi")
+    
+    # Move from Lo
+    def mflo(self, operands):
+        self.register.data_registers[register_index(operands[0])] = self.register.lo
+        print("Loading " + str(self.register.lo) + " from $lo")
 
     # // Jump Operations //
     # Jump
