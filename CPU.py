@@ -32,7 +32,7 @@ class ALU:
         rt = register_index(operands[2])
 
         register[rd] = register[rs] + register[rt]
-        print("Register #"+ str(rd), register[rd])
+        print("Register #"+ str(rd) + ":", register[rd])
         return register[rd]
     
     # Add Constant(Immediate) to Register
@@ -43,7 +43,7 @@ class ALU:
         immd = register_index(operands[2])
 
         register[rd] = register[rs] + immd
-        print("Register #"+ str(rd), register[rd])
+        print("Register #"+ str(rd) + ":", register[rd])
         return register[rd]
     
     # Subtract Registers
@@ -54,7 +54,7 @@ class ALU:
         rt = register_index(operands[2])
 
         register[rd] = register[rs] - register[rt]
-        print("Register #"+ str(rd), register[rd])
+        print("Register #"+ str(rd) + ":", register[rd])
         return register[rd]
     
     # Multiply Registers
@@ -64,7 +64,7 @@ class ALU:
         rs = register_index(operands[1])
 
         hi = register[rd] * register[rs]
-        print(hi)
+        print("Product stored in $hi: " + str(hi))
         self.register.hi = hi
         
     
@@ -74,9 +74,13 @@ class ALU:
         rd = register_index(operands[0])
         rs = register_index(operands[1])
 
+        if register[rs] == 0:
+            print("ERROR: Attempted to Divide by Zero")
+            return
+
         hi = register[rd] // register[rs]
         lo = register[rd] % register[rs]
-        print(hi, lo)
+        print("Quotient stored in $hi: " + str(hi), "\nRemainder stored in $lo: " + str(lo))
         self.register.hi = hi
         self.register.lo = lo
     
@@ -92,7 +96,7 @@ class ALU:
             register[rd] = 1
         else:
             register[rd] = 0
-        print("Register #" + str(rd), register[rd])
+        print("Register #" + str(rd) + ":", register[rd])
         return register[rd]
         
     
@@ -111,7 +115,7 @@ class ALU:
             self.parent.counter += int(offset)
             print("Operands are equal. Skipping " + str(offset) + " instructions")
         else:
-            print("Operands are not equal")
+            print("Operands are not equal. No branching")
     
     # Branch on Not Equal
     def bne(self, operands, parent):
@@ -125,7 +129,7 @@ class ALU:
             self.parent.counter += int(offset)
             print("Operands are not equal. Skipping " + str(offset) + " instructions")
         else:
-            print("Operands are equal")
+            print("Operands are equal. No branching")
 
 
 # ---- Control Unit ----
@@ -202,7 +206,7 @@ class CU:
         address = register_index(operands[1])
 
         self.register.data_registers[rt] = self.request(address)
-        print(self.register.data_registers[rt])
+        print("Loading " + str(self.register.data_registers[rt]) + " from address b" + str(address) + " into Register #" + str(rt))
 
     # Store Word
     def sw(self, operands):
@@ -210,7 +214,7 @@ class CU:
         address = register_index(operands[1])
 
         self.memory_bus.memory[address] = self.register.data_registers[rt]
-        print(self.memory_bus.memory[address])
+        print("Loading " + str(self.memory_bus.memory[address]) + " from Register #" + str(rt) + " into address b" + str(address))
 
     # Move from Hi
     def mfhi(self, operands):
@@ -222,7 +226,7 @@ class CU:
         self.register.data_registers[register_index(operands[0])] = self.register.lo
         print("Loading " + str(self.register.lo) + " from $lo")
 
-    # // Jump Operations //
+    # // Unconditional Jump Operations //
     # Jump
     def jump(self, operands, parent):
         self.parent = parent
@@ -251,10 +255,10 @@ class CPU:
     def execute(self, instructions):
         instructions = instructions.split("\n")
         instruction_dict = {str(instructions.index(instruction)):instruction for instruction in instructions}
-        print(instructions, instruction_dict)
-        print("Counter " + str(self.counter))
+        #print(instructions, instruction_dict)
+        #print("Counter " + str(self.counter))
         while str(self.counter) in instruction_dict.keys():
-            print("Cycle: " + str(self.counter))
+            print("\nCycle: " + str(self.counter))
             self.cu.run(instruction_dict[str(self.counter)])
             self.counter += 1
 
@@ -300,7 +304,6 @@ lines = []
 while True:
     line = input("")
     if line == "HALT ;":
-        print("Execution Terminated")
         break
     lines.append(line)
 

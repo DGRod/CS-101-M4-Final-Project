@@ -12,5 +12,5 @@ class MainMemoryBus:
                 address = int(split_line[0])
                 value = int(split_line[1])
                 self.memory[address] = value
-            print(self.memory)
+            #print(self.memory)
 
