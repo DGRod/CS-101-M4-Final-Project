@@ -255,6 +255,7 @@ class CPU:
     def execute(self, instructions):
         instructions = instructions.split("\n")
         instruction_dict = {str(instructions.index(instruction)):instruction for instruction in instructions}
+        print("\n/// EXECUTING INSTRUCTIONS ///")
         #print(instructions, instruction_dict)
         #print("Counter " + str(self.counter))
         while str(self.counter) in instruction_dict.keys():
@@ -297,19 +298,22 @@ cpu = CPU(32, cache, memory_bus)
 # ////////// Input Processor //////////
 
 print('Welcome to CPU Simulator!')
-print("Please enter commands using MIPS Assembly Language\n")
-print("/// OBJECTIVE: ")
 
-lines = []
-while True:
-    line = input("")
-    if line == "HALT ;":
-        break
-    lines.append(line)
+mode = input("Would you like to run an existing file? Y/N\n")
+if mode.upper() == "Y":
+    file = input("Please enter the file path:\n")
+else:
+    print("/// Please enter commands using MIPS Assembly Language ///\n")
+    lines = []
+    while True:
+        line = input("")
+        if line == "HALT ;":
+            break
+        lines.append(line)
 
-instructions = "\n".join(lines)
-
-cpu.execute(instructions)
+    instructions = "\n".join(lines)
+    cpu.execute(instructions)
+    print("\n/// EXECUTION TERMINATED ///")
 
 
 
