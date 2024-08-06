@@ -7,9 +7,11 @@ class Cache:
         self.main_memory = main_memory
 
         self.cache_active = False
+
+        self.counter = 0
         
         self.cache = [{"set":None, "address":None, "data":None} for x in range(0,num_of_registers)]
-        print(self.cache)
+        #print(self.cache)
 
     def status(self, code):
         # Set Cache status to OFF
@@ -28,7 +30,7 @@ class Cache:
             block["address"] = None
             block["data"] = None
         print("Cache Flushed")
-        print(self.cache)
+        #print(self.cache)
 
     def replace(self, address, replacement_policy=None):
 
@@ -41,7 +43,15 @@ class Cache:
                 return block
         # Cache full, choose which block to replace       
         if replacement_policy == "FIFO":
-            pass
+            block = self.cache[self.counter]
+            block["address"] = address
+            block["data"] = self.main_memory.memory[address]
+
+            if self.counter < self.num_of_registers - 1:
+                self.counter += 1
+            else:
+                self.counter = 0
+            return block
         # If no Replacement Policy is selected, replace a random block
         else:
             block = self.cache[randint(0,len(self.cache) - 1)]
