@@ -274,7 +274,7 @@ class CPU:
 
 # ////////// Setup //////////
 
-datafile = "C:/Users/DGRod/OneDrive/Desktop/Python Code/CS 101 M4 Project/Input Data/Codecademy-Computer-Architecture-Portfolio-Project-Files/data_input.txt"
+datafile = "C:/Users/DGRod/OneDrive/Desktop/Python Code/CS 101 M4 Project/input/data_input.txt"
 
 
 memory_bus = MainMemoryBus()
@@ -301,7 +301,16 @@ print('Welcome to CPU Simulator!')
 
 mode = input("Would you like to run an existing file? Y/N\n")
 if mode.upper() == "Y":
-    file = input("Please enter the file path:\n")
+    filename = input("Please enter the name of the file you would like to run:\n")
+    lines = []
+    with open("input/" + str(filename), "r") as data:
+        lines = []
+        for line in data.readlines():
+            lines.append(line.strip("\n"))
+
+    instructions = "\n".join(lines)
+    cpu.execute(instructions)    
+
 else:
     print("/// Please enter commands using MIPS Assembly Language ///\n")
     lines = []
