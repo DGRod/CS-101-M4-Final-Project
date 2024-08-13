@@ -180,7 +180,15 @@ class CU:
         # If Cache is OFF, access MainMemoryBus
         elif self.cache.cache_active == False:
             return self.memory_bus.memory[target_address]
-
+        
+    def send(self, address, data):
+        # If Cache is ON, send data to Cache
+        if self.cache.cache_active == True:
+            return self.cache.write(address, data)
+        # If Cache is OFF, send data directly to MainMemoryBus
+        elif self.cache.cache_active == False:
+            self.memory_bus.memory[address] = data
+            return self.memory_bus.memory[address]
 
     def run(self, input):
         split_input = input.split(" ")
@@ -256,8 +264,8 @@ class CU:
         rt = register_index(operands[0])
         address = register_index(operands[1])
 
-        self.memory_bus.memory[address] = self.register.data_registers[rt]
-        print("Loading " + str(self.memory_bus.memory[address]) + " from Register #" + str(rt) + " into address b" + str(address))
+        self.send(self.register.data_registers[rt], address)
+        print("Sending " + str(self.register.data_registers[rt]) + " from Register #" + str(rt) + " to address b" + str(address))
 
     # Move from Hi
     def mfhi(self, operands):
