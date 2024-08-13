@@ -301,12 +301,17 @@ print('Welcome to CPU Simulator!')
 
 mode = input("Would you like to run an existing file? Y/N\n")
 if mode.upper() == "Y":
-    filename = input("Please enter the name of the file you would like to run:\n")
-    lines = []
-    with open("input/" + str(filename), "r") as data:
-        lines = []
-        for line in data.readlines():
-            lines.append(line.strip("\n"))
+    while True:
+        try:
+            filename = input("Please enter the name of the file you would like to run:\n")
+            lines = []
+            with open("input/" + str(filename), "r") as data:
+                lines = []
+                for line in data.readlines():
+                    lines.append(line.strip("\n"))
+            break
+        except:
+            print("File not found in this directory.")
 
     instructions = "\n".join(lines)
     cpu.execute(instructions)    
