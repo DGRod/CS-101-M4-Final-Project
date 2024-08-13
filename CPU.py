@@ -98,8 +98,7 @@ class ALU:
             register[rd] = 0
         print("Register #" + str(rd) + ":", register[rd])
         return register[rd]
-        
-    
+
     # // Logical Operations //
     # Bitwise AND
     def band(self, operands):
