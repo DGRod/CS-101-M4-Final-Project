@@ -101,6 +101,38 @@ class ALU:
         
     
     # // Logical Operations //
+    # Bitwise AND
+    def band(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+        rt = register_index(operands[2])
+
+        register[rd] = register[rs] & register[rt]
+        print("Register #" + str(rd) + ":", register[rd])
+        return register[rd]
+    
+    # Bitwise OR
+    def bor(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+        rt = register_index(operands[2])
+
+        register[rd] = register[rs] | register[rt]
+        print("Register #" + str(rd) + ":", register[rd])
+        return register[rd]
+    
+    # Bitwise XOR
+    def bxor(self, operands):
+        register = self.register.data_registers
+        rd = register_index(operands[0])
+        rs = register_index(operands[1])
+        rt = register_index(operands[2])
+
+        register[rd] = register[rs] ^ register[rt]
+        print("Register #" + str(rd) + ":", register[rd])
+        return register[rd]
 
     # // Conditional Operations //
     # Branch on Equal
@@ -153,6 +185,9 @@ class CU:
 
     def run(self, input):
         split_input = input.split(" ")
+        if len(split_input) <= 1:
+            print("No valid MIPS commands entered")
+            return
         opcode = split_input[0]
         operands = split_input[1].split(",")
         print("Performing " + opcode, "on " + str(operands))
@@ -174,6 +209,15 @@ class CU:
         
         elif opcode == "SLT":
             self.alu.slt(operands)
+
+        elif opcode == "AND":
+            self.alu.band(operands)
+        
+        elif opcode == "OR":
+            self.alu.bor(operands)
+        
+        elif opcode == "XOR":
+            self.alu.bxor(operands)
 
         elif opcode == "BEQ":
             self.alu.beq(operands, self.parent)
@@ -299,7 +343,7 @@ cpu = CPU(32, cache, memory_bus)
 
 print('Welcome to CPU Simulator!')
 
-mode = input("Would you like to run an existing file? Y/N\n")
+mode = input("Would you like to run an existing file? (Y/N)\n")
 if mode.upper() == "Y":
     while True:
         try:
