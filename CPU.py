@@ -308,14 +308,13 @@ class CPU:
     
     def execute(self, instructions):
         instructions = instructions.split("\n")
+        for i in range(0,len(instructions)):
+            if instructions[i] == '':
+                instructions.pop(i)
         instruction_dict = {str(instructions.index(instruction)):instruction for instruction in instructions}
         print("\n/// EXECUTING INSTRUCTIONS ///")
         #print(instructions, instruction_dict)
         #print("Counter " + str(self.counter))
-        for key,value in instruction_dict.items():
-            if value == '':
-                instruction_dict.pop(key)
-
         while str(self.counter) in instruction_dict.keys():
             print("\nCycle: " + str(self.counter))
             self.cu.run(instruction_dict[str(self.counter)])
