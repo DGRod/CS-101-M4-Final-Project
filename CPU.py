@@ -267,7 +267,7 @@ class CU:
         rt = register_index(operands[0])
         address = register_index(operands[1])
 
-        self.send(self.register.data_registers[rt], address)
+        self.send(address, self.register.data_registers[rt])
         print("Sending " + str(self.register.data_registers[rt]) + " from Register #" + str(rt) + " to address b" + str(address))
 
     # Move from Hi
@@ -311,7 +311,9 @@ class CPU:
         for i in range(0,len(instructions)):
             if instructions[i] == '':
                 instructions.pop(i)
-        instruction_dict = {str(instructions.index(instruction)):instruction for instruction in instructions}
+        instruction_dict = {}
+        for i in range(0, len(instructions)):
+            instruction_dict[str(i)] = instructions[i]
         print("\n/// EXECUTING INSTRUCTIONS ///")
         #print(instructions, instruction_dict)
         #print("Counter " + str(self.counter))
@@ -337,7 +339,9 @@ datafile = "C:/Users/DGRod/OneDrive/Desktop/Python Code/CS 101 M4 Project/input/
 memory_bus = MainMemoryBus()
 memory_bus.download(datafile)
 
-cache = Cache(memory_bus, 64)
+cache = Cache(memory_bus, 12, number_of_sets=3)
+cache.set_replacement_policy("FIFO")
+cache.set_write_policy("BACK")
 
 register = Register(32, 10)
 register.data_registers[6] = 4
@@ -388,3 +392,5 @@ else:
 
 
 
+# print(cpu.cache.cache)
+# print(memory_bus.memory)
