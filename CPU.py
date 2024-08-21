@@ -249,6 +249,9 @@ class CU:
         
         elif opcode == "CACHE":
             self.cache_op(operands)
+        
+        elif opcode == "HALT":
+            print("\n/// EXECUTION TERMINATED ///")
 
     # // Data Transfer Operations //
     # Load Word
@@ -309,6 +312,10 @@ class CPU:
         print("\n/// EXECUTING INSTRUCTIONS ///")
         #print(instructions, instruction_dict)
         #print("Counter " + str(self.counter))
+        for key,value in instruction_dict.items():
+            if value == '':
+                instruction_dict.pop(key)
+
         while str(self.counter) in instruction_dict.keys():
             print("\nCycle: " + str(self.counter))
             self.cu.run(instruction_dict[str(self.counter)])
