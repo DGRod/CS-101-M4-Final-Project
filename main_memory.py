@@ -5,6 +5,7 @@ class MainMemoryBus:
         self.memory = {int(bin(x).split("b")[-1]):0 for x in range(0, 256)}
     
     def download(self, datafile):
+        # Load in a file with MainMemory initial conditions
         with open(datafile, 'r') as data:
             lines = data.readlines()
             for line in lines:

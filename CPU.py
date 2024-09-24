@@ -68,7 +68,7 @@ class ALU:
         self.register.hi = hi
         
     
-    # Multiply Registers
+    # Divide Registers
     def div(self, operands):
         register = self.register.data_registers
         rd = register_index(operands[0])
@@ -191,6 +191,7 @@ class CU:
             return self.memory_bus.memory[address]
 
     def run(self, input):
+        # Separate opcode from operands
         split_input = input.split(" ")
         if len(split_input) <= 1:
             print("No valid MIPS commands entered")
@@ -198,7 +199,7 @@ class CU:
         opcode = split_input[0]
         operands = split_input[1].split(",")
         print("Performing " + opcode, "on " + str(operands))
-
+        # Choose which command to execute:
         if opcode == "ADD":
             self.alu.add(operands)
 
@@ -307,16 +308,17 @@ class CPU:
         self.cu = CU(self, self.register, self.alu, self.cache, self.memory_bus)
     
     def execute(self, instructions):
+        # Separate each line of instructions
         instructions = instructions.split("\n")
         for i in range(0,len(instructions)):
             if instructions[i] == '':
                 instructions.pop(i)
+        # Assign an execution cycle to each instruction
         instruction_dict = {}
         for i in range(0, len(instructions)):
             instruction_dict[str(i)] = instructions[i]
+        # Execute each instruction
         print("\n/// EXECUTING INSTRUCTIONS ///")
-        #print(instructions, instruction_dict)
-        #print("Counter " + str(self.counter))
         while str(self.counter) in instruction_dict.keys():
             print("\nCycle: " + str(self.counter))
             self.cu.run(instruction_dict[str(self.counter)])
